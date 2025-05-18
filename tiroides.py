@@ -6,7 +6,6 @@ from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
 # 1. Cargar el dataset
-# Suponemos que tienes un archivo "tiroides.csv" con las columnas que listaste
 df = pd.read_csv('data/tiroides.csv')
 
 # 2. Definir variables predictoras y objetivo
@@ -100,19 +99,19 @@ clf = DecisionTreeClassifier(random_state=42)
 clf.fit(X_train, y_train)
 
 # 6. Evaluar desempeño
-y_pred = clf.predict(X_test)
+'''y_pred = clf.predict(X_test)
 y_prob = clf.predict_proba(X_test)
 
 print("Accuracy:", accuracy_score(y_test, y_pred))
 print("\nClassification Report:\n", classification_report(y_test, y_pred))
-print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
+print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))'''
 
 # 7. Razonamiento con incertidumbre
 def attach_certainty(proba_array, classes):
     idx = np.argmax(proba_array)
     return classes[idx], proba_array[idx]
 
-results = []
+'''results = []
 for probs in y_prob:
     cls, cf = attach_certainty(probs, clf.classes_)
     results.append({'Predicted': cls, 'Certainty': cf})
@@ -122,7 +121,7 @@ print("\nEjemplos con factor de certeza:\n", results_df.head())
 
 # 8. Visualizar la estructura del árbol (opcional)
 text_tree = export_text(clf, feature_names=feature_names)
-print("\nÁrbol de decisión:\n", text_tree)
+print("\nÁrbol de decisión:\n", text_tree)'''
 
 # 9. Sección interactiva para nuevas mediciones
 print("\nIngresa nuevos valores para predecir recurrencia:")

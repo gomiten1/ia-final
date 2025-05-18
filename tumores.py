@@ -10,7 +10,7 @@ from sklearn.metrics import (
 from sklearn.utils import resample
 import matplotlib.pyplot as plt
 
-# 1. Cargar y preprocesar datos
+# 1. Cargar y preprocesar datos# Suponemos que tienes un archivo "tiroides.csv" con las columnas que listaste
 df = pd.read_csv('data/tumores.csv')
 # Eliminar columna de ID
 df = df.drop(columns=['IDNumber'])
@@ -50,7 +50,7 @@ model = DecisionTreeClassifier(random_state=42)
 model.fit(X_train, y_train)
 
 # 6. Evaluar desempeño
-y_pred = model.predict(X_test)
+'''y_pred = model.predict(X_test)
 y_proba = model.predict_proba(X_test)[:, 1]  # Probabilidad de clase positiva (maligno)
 
 metrics = {
@@ -66,7 +66,7 @@ for name, val in metrics.items():
     print(f"{name}: {val:.3f}")
 
 print("Matriz de confusión:")
-print(confusion_matrix(y_test, y_pred))
+print(confusion_matrix(y_test, y_pred))'''
 
 # 7. Razonamiento con incertidumbre
 def factor_de_certeza(proba, umbral=0.5):
@@ -79,7 +79,7 @@ def factor_de_certeza(proba, umbral=0.5):
         return (proba - umbral) / (1 - umbral)
     return (proba - umbral) / umbral
 
-# Aplicar al conjunto de prueba
+'''# Aplicar al conjunto de prueba
 test_results = X_test.copy()
 test_results['y_true'] = y_test
 test_results['y_pred'] = y_pred
@@ -98,7 +98,7 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Curva ROC - Árbol de Decisión')
 plt.legend()
-plt.show()
+plt.show()'''
 
 #  9. Usuario
 print("\nIngresa las medidas del tumor para clasificar:")
