@@ -49,24 +49,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 model = DecisionTreeClassifier(random_state=42)
 model.fit(X_train, y_train)
 
-# 6. Evaluar desempeño
-'''y_pred = model.predict(X_test)
-y_proba = model.predict_proba(X_test)[:, 1]  # Probabilidad de clase positiva (maligno)
 
-metrics = {
-    'Accuracy': accuracy_score(y_test, y_pred),
-    'Precision': precision_score(y_test, y_pred),
-    'Recall': recall_score(y_test, y_pred),
-    'F1-score': f1_score(y_test, y_pred),
-    'ROC AUC': roc_auc_score(y_test, y_proba)
-}
-
-print("--- Métricas de evaluación ---")
-for name, val in metrics.items():
-    print(f"{name}: {val:.3f}")
-
-print("Matriz de confusión:")
-print(confusion_matrix(y_test, y_pred))'''
 
 # 7. Razonamiento con incertidumbre
 def factor_de_certeza(proba, umbral=0.5):
@@ -79,51 +62,79 @@ def factor_de_certeza(proba, umbral=0.5):
         return (proba - umbral) / (1 - umbral)
     return (proba - umbral) / umbral
 
-'''# Aplicar al conjunto de prueba
-test_results = X_test.copy()
-test_results['y_true'] = y_test
-test_results['y_pred'] = y_pred
-test_results['proba_maligno'] = y_proba
-test_results['CF'] = test_results['proba_maligno'].apply(lambda p: factor_de_certeza(p, umbral=0.5))
+menu = int(input("¿Quieres realizar una consulta? (1: Sí, 0: No): "))
+if menu == 1:
 
-print("\nAlgunas predicciones con factor de certeza:")
-print(test_results[['y_true', 'y_pred', 'proba_maligno', 'CF']].head())
+    #  9. Usuario
+    print("\nIngresa las medidas del tumor para clasificar:")
+    feature_names = [
+        'Radius', 'Texture', 'Perimeter', 'Area',
+        'Smoothness', 'Compactness', 'Concavity',
+        'ConcavePoints', 'Symmetry', 'FractalDimension'
+    ]
+    user_vals = []
+    for feat in feature_names:
+        while True:
+            try:
+                val = float(input(f"{feat}: "))
+                user_vals.append(val)
+                break
+            except ValueError:
+                print("Por favor ingresa un número válido.")
 
-# 8. Graficar curva ROC
-fpr, tpr, thresholds = roc_curve(y_test, y_proba)
-plt.figure()
-plt.plot(fpr, tpr, label=f"ROC AUC = {metrics['ROC AUC']:.3f}")
-plt.plot([0, 1], [0, 1], linestyle='--')
-plt.xlabel('False Positive Rate')
-plt.ylabel('True Positive Rate')
-plt.title('Curva ROC - Árbol de Decisión')
-plt.legend()
-plt.show()'''
+    # Crear DataFrame de entrada
+    df_user = pd.DataFrame([user_vals], columns=feature_names)
 
-#  9. Usuario
-print("\nIngresa las medidas del tumor para clasificar:")
-feature_names = [
-    'Radius', 'Texture', 'Perimeter', 'Area',
-    'Smoothness', 'Compactness', 'Concavity',
-    'ConcavePoints', 'Symmetry', 'FractalDimension'
-]
-user_vals = []
-for feat in feature_names:
-    while True:
-        try:
-            val = float(input(f"{feat}: "))
-            user_vals.append(val)
-            break
-        except ValueError:
-            print("Por favor ingresa un número válido.")
+    # Predecir y calcular factor de certeza
+    user_pred = model.predict(df_user)[0]
+    user_proba = model.predict_proba(df_user)[0, 1]
+    user_cf = factor_de_certeza(user_proba)
 
-# Crear DataFrame de entrada
-df_user = pd.DataFrame([user_vals], columns=feature_names)
+    resultado = 'Maligno' if user_pred == 1 else 'Benigno'
+    print(f"\nResultado: {resultado}\nProbabilidad maligno: {user_proba:.2f}\nFactor de certeza: {user_cf:.2f}")
 
-# Predecir y calcular factor de certeza
-user_pred = model.predict(df_user)[0]
-user_proba = model.predict_proba(df_user)[0, 1]
-user_cf = factor_de_certeza(user_proba)
 
-resultado = 'Maligno' if user_pred == 1 else 'Benigno'
-print(f"\nResultado: {resultado}\nProbabilidad maligno: {user_proba:.2f}\nFactor de certeza: {user_cf:.2f}")
+
+# Presentar resultados
+menu = int(input("¿Quieres ver los resultados de la evaluación del modelo? (1: Sí, 0: No): "))
+
+if menu == 1:
+    # 6. Evaluar desempeño
+    y_pred = model.predict(X_test)
+    y_proba = model.predict_proba(X_test)[:, 1]  # Probabilidad de clase positiva (maligno)
+
+    metrics = {
+        'Accuracy': accuracy_score(y_test, y_pred),
+        'Precision': precision_score(y_test, y_pred),
+        'Recall': recall_score(y_test, y_pred),
+        'F1-score': f1_score(y_test, y_pred),
+        'ROC AUC': roc_auc_score(y_test, y_proba)
+    }
+
+    print("--- Métricas de evaluación ---")
+    for name, val in metrics.items():
+        print(f"{name}: {val:.3f}")
+
+    print("Matriz de confusión:")
+    print(confusion_matrix(y_test, y_pred))
+    
+    # Aplicar al conjunto de prueba
+    test_results = X_test.copy()
+    test_results['y_true'] = y_test
+    test_results['y_pred'] = y_pred
+    test_results['proba_maligno'] = y_proba
+    test_results['CF'] = test_results['proba_maligno'].apply(lambda p: factor_de_certeza(p, umbral=0.5))
+
+    print("\nAlgunas predicciones con factor de certeza:")
+    print(test_results[['y_true', 'y_pred', 'proba_maligno', 'CF']].head())
+
+    # 8. Graficar curva ROC
+    fpr, tpr, thresholds = roc_curve(y_test, y_proba)
+    plt.figure()
+    plt.plot(fpr, tpr, label=f"ROC AUC = {metrics['ROC AUC']:.3f}")
+    plt.plot([0, 1], [0, 1], linestyle='--')
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Curva ROC - Árbol de Decisión')
+    plt.legend()
+    plt.show()
