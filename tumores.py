@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeClassifier, export_text
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score,
     f1_score, confusion_matrix, roc_auc_score, roc_curve
@@ -115,6 +115,8 @@ if menu == 1:
     print("Matriz de confusión:")
     print(confusion_matrix(y_test, y_pred))
     
+    
+    
     # Aplicar al conjunto de prueba
     test_results = X_test.copy()
     test_results['y_true'] = y_test
@@ -124,6 +126,10 @@ if menu == 1:
 
     print("\nAlgunas predicciones con factor de certeza:")
     print(test_results[['y_true', 'y_pred', 'proba_maligno', 'CF']].head())
+    
+    # 8. Visualizar la estructura del árbol (opcional)
+    text_tree = export_text(model, feature_names=a.columns.tolist())
+    print("\nÁrbol de decisión:\n", text_tree)
 
     # 8. Graficar curva ROC
     fpr, tpr, thresholds = roc_curve(y_test, y_proba)
