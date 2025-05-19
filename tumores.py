@@ -1,5 +1,3 @@
-
-
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
@@ -10,7 +8,7 @@ from sklearn.metrics import (
 from sklearn.utils import resample
 import matplotlib.pyplot as plt
 
-# 1. Cargar y preprocesar datos# Suponemos que tienes un archivo "tiroides.csv" con las columnas que listaste
+
 df = pd.read_csv('data/tumores.csv')
 # Eliminar columna de ID
 df = df.drop(columns=['IDNumber'])
@@ -18,7 +16,6 @@ df = df.drop(columns=['IDNumber'])
 df['Diagnosis'] = df['Diagnosis'].map({'M': 1, 'B': 0})
 
 # 2. Balancear el dataset con submuestreo (downsampling)
-# Separar clases
 df_maligno = df[df['Diagnosis'] == 1]
 df_benigno = df[df['Diagnosis'] == 0]
 
